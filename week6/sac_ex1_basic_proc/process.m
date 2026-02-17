@@ -1,6 +1,9 @@
 * process.m -- SAC macro: basic preprocessing + bandpass + write outputs
 * Usage (from bash): sac process.m
 *
+* Have data local (on disk). Do basic processing.
+*
+*
 * Edit these variables:
 *   - INPUT_GLOB: which files to process
 *   - FREQMIN/FREQMAX: bandpass corners
@@ -17,13 +20,15 @@ setbb FREQMAX "10"
 r %INPUT_GLOB%
 rmean
 rtr
-taper
+taper type hanning width .05
 
 * 4-pole, zero-phase bandpass (p 2)
 bp c %FREQMIN% %FREQMAX% n 4 p 2
 * overwrite inputs (change to "w append .bp" if you prefer new files)
 * w over
 w append .bp
+
+* pause period off
 
 * ---- read and process ---- REPEAT with np=1 (causal)
 r %INPUT_GLOB%
@@ -37,8 +42,9 @@ bp c %FREQMIN% %FREQMAX% n 4 p 1
 * w over
 w append .bp_np1
 
+* read all three files (raw - np=2 filtered - np=1 filtered)
 setbb INPUT_Z "*Z.sac*"
-r %INPUT_Z
+r %INPUT_Z%
 p1
 pause
 
